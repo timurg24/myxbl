@@ -58,6 +58,11 @@ namespace xbl {
     struct Attribute {
         std::string name;
         Value       value;
+
+        template <typename T>
+        T getValue() {
+            return std::get<T>(value.data); 
+        }
     };
 
     struct Element {
