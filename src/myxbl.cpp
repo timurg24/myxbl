@@ -1,6 +1,21 @@
 #include "myxbl.h"
 
 //==========
+// ATTRIBUTE
+//==========
+
+/**
+ * Returns the attribute value
+ * @param None
+ * @returns Value of attribute
+ * @throws None
+*/
+template <typename T>
+T xbl::Attribute::getValue() {
+    return std::get<T>(value.data); 
+}
+
+//==========
 // ELEMENT
 //==========
 
