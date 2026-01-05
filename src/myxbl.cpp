@@ -193,49 +193,104 @@ xbl::Attribute xbl::Parser::parseStandardAttribute(const std::string& name, uint
     xbl::ValueType type = static_cast<xbl::ValueType>(typeByte);
     result.value.type = type;
 
-    switch(type) {
-    case(xbl::ValueType::String): {
-        result.value.data = std::string(value);
+    switch (type) {
+
+    case xbl::ValueType::String: {
+        result.value.data = value;
         break;
     }
-    case(xbl::ValueType::Int32): {
-        result.value.data = int32_t(std::stoi(value));
+
+    case xbl::ValueType::Int32: {
+        if (value.size() != 4)
+            ERROR("Invalid Int32 size: " + std::to_string(value.size()));
+
+        uint32_t u = 0;
+        for (size_t i = 0; i < 4; ++i)
+            u |= (uint32_t)(uint8_t)value[i] << (8 * i);
+
+        result.value.data = static_cast<int32_t>(u);
         break;
     }
-    case(xbl::ValueType::UInt32): {
-        result.value.data = uint32_t(std::stoi(value));
+
+    case xbl::ValueType::UInt32: {
+        if (value.size() != 4)
+            ERROR("Invalid UInt32 size: " + std::to_string(value.size()));
+
+        uint32_t u = 0;
+        for (size_t i = 0; i < 4; ++i)
+            u |= (uint32_t)(uint8_t)value[i] << (8 * i);
+
+        result.value.data = u;
         break;
     }
-    case(xbl::ValueType::Int64): {
-        result.value.data = int64_t(std::stoll(value));
+
+    case xbl::ValueType::Int64: {
+        if (value.size() != 8)
+            ERROR("Invalid Int64 size: " + std::to_string(value.size()));
+
+        uint64_t u = 0;
+        for (size_t i = 0; i < 8; ++i)
+            u |= (uint64_t)(uint8_t)value[i] << (8 * i);
+
+        result.value.data = static_cast<int64_t>(u);
         break;
     }
-    case(xbl::ValueType::UInt64): {
-        result.value.data = uint32_t(std::stoull(value));
+
+    case xbl::ValueType::UInt64: {
+        if (value.size() != 8)
+            ERROR("Invalid UInt64 size: " + std::to_string(value.size()));
+
+        uint64_t u = 0;
+        for (size_t i = 0; i < 8; ++i)
+            u |= (uint64_t)(uint8_t)value[i] << (8 * i);
+
+        result.value.data = u;
         break;
     }
-    case(xbl::ValueType::Float32): {
-        result.value.data = float(std::stof(value));
+
+    case xbl::ValueType::Float32: {
+        if (value.size() != 4)
+            ERROR("Invalid Float32 size: " + std::to_string(value.size()));
+
+        uint32_t u = 0;
+        for (size_t i = 0; i < 4; ++i)
+            u |= (uint32_t)(uint8_t)value[i] << (8 * i);
+
+        float f;
+        std::memcpy(&f, &u, 4);
+        result.value.data = f;
         break;
     }
-    case(xbl::ValueType::Float64): {
-        result.value.data = double(std::stod(value));
+
+    case xbl::ValueType::Float64: {
+        if (value.size() != 8)
+            ERROR("Invalid Float64 size: " + std::to_string(value.size()));
+
+        uint64_t u = 0;
+        for (size_t i = 0; i < 8; ++i)
+            u |= (uint64_t)(uint8_t)value[i] << (8 * i);
+
+        double d;
+        std::memcpy(&d, &u, 8);
+        result.value.data = d;
         break;
     }
-    case(xbl::ValueType::UInt8): {
-        int v = std::stoi(value);
-        if (v < 0 || v > 255)
-            ERROR("UInt8 out of range: " + value);
-        result.value.data = static_cast<uint8_t>(v);
+
+    case xbl::ValueType::UInt8: {
+        if (value.size() != 1)
+            ERROR("Invalid UInt8 size");
+
+        result.value.data = static_cast<uint8_t>(value[0]);
         break;
     }
-    case(xbl::ValueType::DateTime): {
-        result.value.data = parseDateTime(value);
-    }
-    default: {
-        ERROR(std::string("Invalid data type: ") + std::to_string((int)typeByte));
+
+    case xbl::ValueType::DateTime: {
+        result.value.data = parseDateTime(value); // still text-based
         break;
     }
+
+    default:
+        ERROR("Invalid data type: " + std::to_string((int)typeByte));
     }
     return result;
 }
