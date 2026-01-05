@@ -24,8 +24,8 @@ namespace xbl {
         uint8_t hour;
         uint8_t minute;
         uint8_t second;
-        uint32_t nanoseconds;
-        int16_t offsetMinutes;
+        //uint32_t nanoseconds;
+        //int16_t offsetMinutes;
     };
 
     enum class ValueType : uint8_t {
@@ -43,16 +43,6 @@ namespace xbl {
     struct Value {
         ValueType type;
         std::variant<std::string,int32_t,uint32_t,int64_t,uint64_t,float,double,uint8_t,DateTime> data;
-
-        // Value(std::string v) : type(ValueType::String), data(std::move(v)) {}
-        // Value(int32_t v)     : type(ValueType::Int32),  data(v) {}
-        // Value(uint32_t v)    : type(ValueType::UInt32), data(v) {}
-        // Value(int64_t v)     : type(ValueType::Int64),  data(v) {}
-        // Value(uint64_t v)    : type(ValueType::UInt64), data(v) {}
-        // Value(float v)       : type(ValueType::Float32),data(v) {}
-        // Value(double v)      : type(ValueType::Float64),data(v) {}
-        // Value(uint8_t v)     : type(ValueType::UInt8),   data(v) {}     // (rename Bool if you mean UInt8)
-        // Value(DateTime v)    : type(ValueType::DateTime), data(v) {}
     };
 
     struct Attribute {
@@ -60,9 +50,7 @@ namespace xbl {
         Value       value;
 
         template <typename T>
-        T getValue() {
-            return std::get<T>(value.data); 
-        }
+        T getValue();
     };
 
     struct Element {
